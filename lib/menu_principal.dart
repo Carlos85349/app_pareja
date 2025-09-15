@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'disenos_page.dart';
+import 'recuerdos_page.dart';
 import 'cartas_page.dart';
 
 class MenuPrincipal extends StatelessWidget {
@@ -30,7 +30,7 @@ class MenuPrincipal extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const DisenosPage()),
+                  MaterialPageRoute(builder: (_) => const RecuerdosPage()),
                 );
               },
             ),

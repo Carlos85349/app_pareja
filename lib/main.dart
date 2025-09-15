@@ -12,7 +12,7 @@ class MiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Para Mi Novia 💖",
+      title: "Mi App",
       theme: ThemeData(primarySwatch: Colors.pink),
       home: const MenuPrincipal(),
     );
