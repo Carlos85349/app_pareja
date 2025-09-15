@@ -7,11 +7,16 @@ class DisenosPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Mis Recuerdos 🌸")),
-      body: Center(
+      body: const Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/flor1.png"),
-            Image.asset("assets/flor2.png"),
+            Text(
+              "Aquí irían mis recuerdos contigo.",
+              style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+            ),
+            SizedBox(height: 20),
+            Icon(Icons.photo, size: 100, color: Colors.pink),
           ],
         ),
       ),
