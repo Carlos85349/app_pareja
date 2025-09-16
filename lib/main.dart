@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'menu_principal.dart';
+import 'pages/menu_principal.dart';
 
 void main() {
   runApp(const MiApp());
@@ -12,8 +12,16 @@ class MiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Mi App",
-      theme: ThemeData(primarySwatch: Colors.pink),
+      title: 'Carlos y Berenice ❤️',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: Colors.pink,
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.deepPurple,
+      ),
+      themeMode: ThemeMode.system,
       home: const MenuPrincipal(),
     );
   }
