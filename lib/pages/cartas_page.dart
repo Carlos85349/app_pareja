@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'cartas_service.dart';
+import '../service/cartas_service.dart';
 
 class CartasPage extends StatefulWidget {
   const CartasPage({super.key});

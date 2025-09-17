@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'recuerdos_page.dart';
 import 'cartas_page.dart';
+import 'inicio_page.dart';
 
 class MenuPrincipal extends StatefulWidget {
   const MenuPrincipal({super.key});
@@ -85,35 +86,6 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
             BottomNavigationBarItem(
               icon: Icon(Icons.mail),
               label: "Cartas",
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class InicioPage extends StatelessWidget {
-  const InicioPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.favorite, color: Colors.red, size: 80),
-            SizedBox(height: 20),
-            Text(
-              "Una historia hecha de recuerdos y cartas ❤️",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w500,
-              ),
             ),
           ],
         ),
