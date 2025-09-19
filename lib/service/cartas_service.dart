@@ -9,7 +9,6 @@ class CartasService {
       final List<dynamic> jsonResult = json.decode(data);
       return List<Map<String, dynamic>>.from(jsonResult);
     } catch (e) {
-      print("Error leyendo cartas locales: $e");
       return [];
     }
   }

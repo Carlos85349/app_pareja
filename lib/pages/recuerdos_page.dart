@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'detalle_recuerdo_page.dart';
+import 'recuerdos_data.dart';
 
 class RecuerdosPage extends StatelessWidget {
   const RecuerdosPage({super.key});
@@ -6,19 +8,34 @@ class RecuerdosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mis Recuerdos 🌸")),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Aquí irían mis recuerdos contigo.",
-              style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+      body: ListView.builder(
+        itemCount: recuerdosData.length,
+        itemBuilder: (context, index) {
+          final recuerdo = recuerdosData[index];
+          return Card(
+            margin: const EdgeInsets.all(10),
+            elevation: 5,
+            child: ListTile(
+              title: Text(
+                recuerdo["nombre"],
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DetalleRecuerdoPage(
+                      nombre: recuerdo["nombre"],
+                      descripcion: recuerdo["descripcion"],
+                      imagenes: List<String>.from(recuerdo["archivos"]),
+                    ),
+                  ),
+                );
+              },
             ),
-            SizedBox(height: 20),
-            Icon(Icons.photo, size: 100, color: Colors.pink),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

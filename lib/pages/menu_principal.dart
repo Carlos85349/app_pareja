@@ -71,7 +71,7 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.pink[100],
           selectedItemColor: Colors.redAccent,
-          unselectedItemColor: Colors.black54,
+          unselectedItemColor: Colors.pink[900],
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           items: const [
