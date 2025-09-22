@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../service/cartas_service.dart';
+import 'detalle_carta_page.dart';
 
 class CartasPage extends StatefulWidget {
   const CartasPage({super.key});
@@ -21,78 +22,72 @@ class _CartasPageState extends State<CartasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mis Cartas 💌")),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _cartasFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error cargando cartas: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("No hay cartas disponibles"));
-          }
-
-          final cartas = snapshot.data!;
-
-          return ListView.builder(
-            itemCount: cartas.length,
-            itemBuilder: (context, index) {
-              final carta = cartas[index]; // cada carta es un Map<String, dynamic>
-
-              // Puedes acceder a los campos según tu JSON
-              final fecha = carta['fecha'] ?? 'Sin fecha';
-              final contenido = carta['contenido'] ?? '';
-
-              return Card(
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: Text(fecha, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text(contenido),
-                  onTap: () {
-                    // Si quieres, aquí puedes navegar a una página detalle
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CartaDetallePage(carta: carta),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class CartaDetallePage extends StatelessWidget {
-  final Map<String, dynamic> carta;
-  const CartaDetallePage({super.key, required this.carta});
-
-  @override
-  Widget build(BuildContext context) {
-    final fecha = carta['fecha'] ?? '';
-    final contenido = carta['contenido'] ?? '';
-
-    return Scaffold(
-      appBar: AppBar(title: Text(fecha)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          width: double.infinity, // fuerza ancho de pantalla
-          child: Text(
-            contenido,
-            style: const TextStyle(
-              fontSize: 18,
-              fontStyle: FontStyle.italic,
-              height: 1.5, // más legible
-            ),
-            textAlign: TextAlign.justify,
-            softWrap: true,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFFF8F0), Color(0xFFF4A7B9)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
+        ),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _cartasFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Error cargando cartas: ${snapshot.error}"));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text("No hay cartas disponibles"));
+            }
+
+            final cartas = snapshot.data!;
+
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              itemCount: cartas.length,
+              itemBuilder: (context, index) {
+                final carta = cartas[index];
+                final fecha = carta['fecha'] ?? 'Sin fecha';
+                final contenido = carta['contenido'] ?? '';
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    title: Text(
+                      fecha,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    subtitle: Text(
+                      contenido,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetalleCartaPage(carta: carta),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );

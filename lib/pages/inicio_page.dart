@@ -109,48 +109,65 @@ class _InicioPageState extends State<InicioPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PageView.builder(
-          controller: _pageController,
-          itemCount: _imagenes.length,
-          itemBuilder: (context, index) {
-            return Container(
-              color: Colors.black,
-              child: Center(
-                child: Image.asset(
-                  _imagenes[index],
-                  fit: BoxFit.contain, // 🔹 asegura que no se recorten
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
-              ),
-            );
-          },
+    Widget build(BuildContext context) {
+    return Container(
+      // 🔹 Fondo degradado elegante
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFFFFF8F0), Color(0xFFF4A7B9)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        Positioned(
-          bottom: 50,
-          left: 20,
-          right: 20,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.black54,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              _fraseActual,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontStyle: FontStyle.italic,
+      ),
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: _imagenes.length,
+            itemBuilder: (context, index) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+                  child: Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.asset(
+                      _imagenes[index],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          Positioned(
+            bottom: 50,
+            left: 20,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white70, // 🔹 más cálido y elegante
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _fraseActual,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
