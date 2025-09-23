@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../widgets/fondo_dinamico.dart'; // 👈 importa el widget de fondo dinámico
 
 class InicioPage extends StatefulWidget {
   const InicioPage({super.key});
@@ -109,16 +110,9 @@ class _InicioPageState extends State<InicioPage> {
   }
 
   @override
-    Widget build(BuildContext context) {
-    return Container(
-      // 🔹 Fondo degradado elegante
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFFF8F0), Color(0xFFF4A7B9)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+  Widget build(BuildContext context) {
+    return FondoDinamico(
+      tipo: "inicio", // 👈 usamos el fondo dinámico para esta pantalla
       child: Stack(
         children: [
           PageView.builder(
@@ -152,7 +146,7 @@ class _InicioPageState extends State<InicioPage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white70, // 🔹 más cálido y elegante
+                color: Colors.white70,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(

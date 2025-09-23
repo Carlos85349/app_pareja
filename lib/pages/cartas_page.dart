@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../service/cartas_service.dart';
 import 'detalle_carta_page.dart';
+import '../widgets/fondo_dinamico.dart'; // <- ajusta la ruta si tu widget está en otra carpeta
 
 class CartasPage extends StatefulWidget {
   const CartasPage({super.key});
@@ -22,16 +23,9 @@ class _CartasPageState extends State<CartasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFFF8F0), Color(0xFFF4A7B9)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      // Fondo gestionado por FondoDinamico
+      body: FondoDinamico(
+        tipo: "cartas",
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _cartasFuture,
           builder: (context, snapshot) {
@@ -60,8 +54,7 @@ class _CartasPageState extends State<CartasPage> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: ListTile(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     title: Text(
                       fecha,
                       style: const TextStyle(
@@ -79,7 +72,10 @@ class _CartasPageState extends State<CartasPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => DetalleCartaPage(carta: carta),
+                          builder: (_) => DetalleCartaPage(
+                            cartas: cartas,   // 🔹 lista completa
+                            indice: index,    // 🔹 índice de la carta seleccionada
+                          ),
                         ),
                       );
                     },

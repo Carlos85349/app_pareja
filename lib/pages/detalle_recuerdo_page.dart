@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/fondo_dinamico.dart'; // 👈 ajusta la ruta
 
 class DetalleRecuerdoPage extends StatelessWidget {
   final List<Map<String, dynamic>> listaRecuerdos;
@@ -20,16 +21,8 @@ class DetalleRecuerdoPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: size.height,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFFF8F0), Color(0xFFF4A7B9)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      body: FondoDinamico(
+        tipo: "recuerdos", // 👈 mismo fondo que en RecuerdosPage
         child: SafeArea(
           child: Column(
             children: [

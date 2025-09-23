@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'recuerdos_page.dart';
 import 'cartas_page.dart';
 import 'inicio_page.dart';
+import '../widgets/fondo_dinamico.dart';
 
 class MenuPrincipal extends StatefulWidget {
   const MenuPrincipal({super.key});
@@ -20,36 +21,42 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
     CartasPage(),
   ];
 
+  final List<String> _fondos = [
+    "inicio",
+    "recuerdos",
+    "cartas",
+  ];
+
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
   }
 
-  Future<bool> _onWillPop() async {
+  void _onBackPressed(bool canPop, dynamic result) {
     if (_selectedIndex != 0) {
-      _onItemTapped(0);
-      return false;
+      setState(() => _selectedIndex = 0);
+    } else {
+      final now = DateTime.now();
+      if (_lastPressed == null || now.difference(_lastPressed!) > const Duration(seconds: 2)) {
+        _lastPressed = now;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Presione otra vez para salir"),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      } else {
+        Navigator.of(context).maybePop();
+      }
     }
-
-    final now = DateTime.now();
-    if (_lastPressed == null || now.difference(_lastPressed!) > const Duration(seconds: 2)) {
-      _lastPressed = now;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Presione otra vez para salir"),
-          duration: Duration(seconds: 1),
-        ),
-      );
-      return false;
-    }
-    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      onPopInvokedWithResult: _onBackPressed,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           flexibleSpace: Container(
@@ -71,22 +78,23 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
           ),
         ),
 
-        // 🔹 AnimatedSwitcher para transición suave entre páginas
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 400),
-          transitionBuilder: (child, animation) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          child: _pages[_selectedIndex],
+        body: FondoDinamico(
+          tipo: _fondos[_selectedIndex],
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            transitionBuilder: (child, animation) =>
+                FadeTransition(opacity: animation, child: child),
+            child: _pages[_selectedIndex],
+          ),
         ),
 
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 8,
-                offset: const Offset(0, -2),
+                offset: Offset(0, -2),
               ),
             ],
           ),

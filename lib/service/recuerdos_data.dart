@@ -81,7 +81,7 @@ const List<Map<String, dynamic>> recuerdosData = [
   },
   {
     "nombre": "Siguatepeque",
-    "descripcion": "Vagando por Siguatepeque 🌆, buenísimas las baleadas 🌮",
+    "descripcion": "Vagando por Siguatepeque 🌆, buenísimas las baleadas",
     "archivos": [
       "assets/recuerdos/sigua1.jpg",
       "assets/recuerdos/sigua2.jpg",
@@ -112,7 +112,9 @@ const List<Map<String, dynamic>> recuerdosData = [
     "nombre": "Flores Amarillas",
     "descripcion": "La segunda ocasión en que te dí flores amarillas un 21 de septiembre ❤️",
     "archivos": [
-      
+      "assets/recuerdos/flores1.jpg",
+      "assets/recuerdos/flores2.jpg",
+      "assets/recuerdos/flores3.jpg",
     ],
   },
 ];
