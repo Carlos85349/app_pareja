@@ -55,36 +55,54 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
     return PopScope(
       onPopInvokedWithResult: _onBackPressed,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.pink.shade100, Colors.pink.shade200],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-          ),
-          title: const Text(
-            "Carlos y Berenice ❤️",
-            style: TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-            ),
-          ),
-        ),
-
         body: FondoDinamico(
           tipo: _fondos[_selectedIndex],
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
-            transitionBuilder: (child, animation) =>
-                FadeTransition(opacity: animation, child: child),
-            child: _pages[_selectedIndex],
+          child: Column(
+            children: [
+              // AppBar simulado dentro de SafeArea con línea divisoria
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        "Carlos y Berenice ❤️",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black12,
+                              offset: Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Línea divisoria
+                    const Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Color.fromARGB(255, 238, 209, 209),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Contenido de la página
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  transitionBuilder: (child, animation) =>
+                      FadeTransition(opacity: animation, child: child),
+                  child: _pages[_selectedIndex],
+                ),
+              ),
+            ],
           ),
         ),
 

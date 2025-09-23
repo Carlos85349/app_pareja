@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/fondo_dinamico.dart'; // 👈 ajusta la ruta
+import '../widgets/fondo_dinamico.dart';
 
-class DetalleRecuerdoPage extends StatelessWidget {
+class DetalleRecuerdoPage extends StatefulWidget {
   final List<Map<String, dynamic>> listaRecuerdos;
   final int indice;
 
@@ -12,17 +12,44 @@ class DetalleRecuerdoPage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final recuerdo = listaRecuerdos[indice];
-    final String nombre = recuerdo["nombre"];
-    final String descripcion = recuerdo["descripcion"];
-    final List<String> imagenes = List<String>.from(recuerdo["archivos"]);
+  State<DetalleRecuerdoPage> createState() => _DetalleRecuerdoPageState();
+}
 
+class _DetalleRecuerdoPageState extends State<DetalleRecuerdoPage> {
+  late PageController _pageController;
+  late int _currentIndice;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndice = widget.indice;
+    _pageController = PageController(initialPage: _currentIndice);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _irARecuerdo(int nuevoIndice) {
+    if (nuevoIndice >= 0 && nuevoIndice < widget.listaRecuerdos.length) {
+      _pageController.animateToPage(
+        nuevoIndice,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+      setState(() => _currentIndice = nuevoIndice);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: FondoDinamico(
-        tipo: "recuerdos", // 👈 mismo fondo que en RecuerdosPage
+        tipo: "recuerdos",
         child: SafeArea(
           child: Column(
             children: [
@@ -56,66 +83,80 @@ class DetalleRecuerdoPage extends StatelessWidget {
                 ),
               ),
 
-              // Contenido scrollable centrado
+              // PageView con swipe horizontal
               Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: size.height - 160),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Título
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            child: Text(
-                              nombre,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: widget.listaRecuerdos.length,
+                  onPageChanged: (index) {
+                    setState(() => _currentIndice = index);
+                  },
+                  itemBuilder: (context, index) {
+                    final recuerdo = widget.listaRecuerdos[index];
+                    final nombre = recuerdo["nombre"];
+                    final descripcion = recuerdo["descripcion"];
+                    final imagenes = List<String>.from(recuerdo["archivos"]);
 
-                          // Imágenes
-                          for (var img in imagenes)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 5,
-                                clipBehavior: Clip.antiAlias,
-                                child: Image.asset(
-                                  img,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 400,
+                    return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: size.height - 160),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Título
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Text(
+                                  nombre,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                          // Descripción
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            child: Text(
-                              descripcion,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                                height: 1.5,
+                              // Imágenes
+                              for (var img in imagenes)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 5,
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Image.asset(
+                                      img,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: 400,
+                                    ),
+                                  ),
+                                ),
+
+                              // Descripción
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Text(
+                                  descripcion,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                    height: 1.5,
+                                  ),
+                                  textAlign: TextAlign.justify,
+                                ),
                               ),
-                              textAlign: TextAlign.justify,
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
 
@@ -125,22 +166,12 @@ class DetalleRecuerdoPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (indice > 0)
+                    if (_currentIndice > 0)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalleRecuerdoPage(
-                                    listaRecuerdos: listaRecuerdos,
-                                    indice: indice - 1,
-                                  ),
-                                ),
-                              );
-                            },
+                            onPressed: () => _irARecuerdo(_currentIndice - 1),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.pinkAccent.shade200,
@@ -158,22 +189,12 @@ class DetalleRecuerdoPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                    if (indice < listaRecuerdos.length - 1)
+                    if (_currentIndice < widget.listaRecuerdos.length - 1)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalleRecuerdoPage(
-                                    listaRecuerdos: listaRecuerdos,
-                                    indice: indice + 1,
-                                  ),
-                                ),
-                              );
-                            },
+                            onPressed: () => _irARecuerdo(_currentIndice + 1),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.pinkAccent.shade200,

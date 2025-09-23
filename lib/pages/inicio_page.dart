@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../widgets/fondo_dinamico.dart'; // 👈 importa el widget de fondo dinámico
+import '../widgets/fondo_dinamico.dart';
 
 class InicioPage extends StatefulWidget {
   const InicioPage({super.key});
@@ -10,7 +10,7 @@ class InicioPage extends StatefulWidget {
   State<InicioPage> createState() => _InicioPageState();
 }
 
-class _InicioPageState extends State<InicioPage> {
+class _InicioPageState extends State<InicioPage> with AutomaticKeepAliveClientMixin {
   final List<String> _imagenes = [
     "assets/images/foto1.jpg",
     "assets/images/foto2.jpg",
@@ -61,9 +61,10 @@ class _InicioPageState extends State<InicioPage> {
     "Sos mi todo, mi amor 💞",
   ];
 
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
+  static int _lastPage = 0; // 🔹 recordar última foto vista
+  late final PageController _pageController = PageController(initialPage: _lastPage);
 
+  int _currentPage = _lastPage;
   String _fraseActual = "";
   late Timer _timerFrases;
   late Timer _timerImagenes;
@@ -72,21 +73,29 @@ class _InicioPageState extends State<InicioPage> {
   @override
   void initState() {
     super.initState();
-
     _cambiarFrase();
 
-    // cambiar frase cada 5 segundos
-    _timerFrases = Timer.periodic(const Duration(seconds: 5), (timer) {
-      _cambiarFrase();
+    // escuchar cambios manuales de página
+    _pageController.addListener(() {
+      final newPage = _pageController.page?.round() ?? _currentPage;
+      if (_currentPage != newPage) {
+        _currentPage = newPage;
+        _lastPage = newPage; // actualizar última página vista
+      }
     });
 
+    // cambiar frase cada 5 segundos
+    _timerFrases = Timer.periodic(const Duration(seconds: 5), (_) => _cambiarFrase());
+
     // cambiar imagen cada 3 segundos
-    _timerImagenes = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timerImagenes = Timer.periodic(const Duration(seconds: 3), (_) {
+      // avanzar automáticamente desde la página actual
       if (_currentPage < _imagenes.length - 1) {
         _currentPage++;
       } else {
         _currentPage = 0;
       }
+      _lastPage = _currentPage; // actualizar última página vista
       _pageController.animateToPage(
         _currentPage,
         duration: const Duration(milliseconds: 500),
@@ -111,11 +120,13 @@ class _InicioPageState extends State<InicioPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // requerido por AutomaticKeepAliveClientMixin
     return FondoDinamico(
-      tipo: "inicio", // 👈 usamos el fondo dinámico para esta pantalla
+      tipo: "inicio",
       child: Stack(
         children: [
           PageView.builder(
+            key: const PageStorageKey('inicioPageView'),
             controller: _pageController,
             itemCount: _imagenes.length,
             itemBuilder: (context, index) {
@@ -164,4 +175,7 @@ class _InicioPageState extends State<InicioPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

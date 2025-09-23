@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/fondo_dinamico.dart';
 
-class DetalleCartaPage extends StatelessWidget {
+class DetalleCartaPage extends StatefulWidget {
   final List<Map<String, dynamic>> cartas;
   final int indice;
 
@@ -12,11 +12,39 @@ class DetalleCartaPage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final carta = cartas[indice];
-    final fecha = carta['fecha'] ?? '';
-    final contenido = carta['contenido'] ?? '';
+  State<DetalleCartaPage> createState() => _DetalleCartaPageState();
+}
 
+class _DetalleCartaPageState extends State<DetalleCartaPage> {
+  late PageController _pageController;
+  late int _currentIndice;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndice = widget.indice;
+    _pageController = PageController(initialPage: _currentIndice);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _irACarta(int nuevoIndice) {
+    if (nuevoIndice >= 0 && nuevoIndice < widget.cartas.length) {
+      _pageController.animateToPage(
+        nuevoIndice,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+      setState(() => _currentIndice = nuevoIndice);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -55,48 +83,61 @@ class DetalleCartaPage extends StatelessWidget {
                 ),
               ),
 
-              // Contenido scrollable centrado
+              // PageView con swipe horizontal entre cartas
               Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: size.height - 160),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Fecha
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            child: Text(
-                              fecha,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: widget.cartas.length,
+                  onPageChanged: (index) {
+                    setState(() => _currentIndice = index);
+                  },
+                  itemBuilder: (context, index) {
+                    final carta = widget.cartas[index];
+                    final fecha = carta['fecha'] ?? '';
+                    final contenido = carta['contenido'] ?? '';
 
-                          // Contenido
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            child: Text(
-                              contenido,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black87,
-                                height: 1.5,
+                    return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: size.height - 160),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Fecha
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Text(
+                                  fecha,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
+
+                              // Contenido
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Text(
+                                  contenido,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.black87,
+                                    height: 1.5,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
 
@@ -106,22 +147,12 @@ class DetalleCartaPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (indice > 0)
+                    if (_currentIndice > 0)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalleCartaPage(
-                                    cartas: cartas,
-                                    indice: indice - 1,
-                                  ),
-                                ),
-                              );
-                            },
+                            onPressed: () => _irACarta(_currentIndice - 1),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.pinkAccent.shade200,
@@ -139,22 +170,12 @@ class DetalleCartaPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                    if (indice < cartas.length - 1)
+                    if (_currentIndice < widget.cartas.length - 1)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalleCartaPage(
-                                    cartas: cartas,
-                                    indice: indice + 1,
-                                  ),
-                                ),
-                              );
-                            },
+                            onPressed: () => _irACarta(_currentIndice + 1),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.pinkAccent.shade200,

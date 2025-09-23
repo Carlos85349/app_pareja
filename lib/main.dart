@@ -15,11 +15,9 @@ class MiApp extends StatelessWidget {
       title: 'Carlos y Berenice ❤️',
       theme: ThemeData(
         brightness: Brightness.light,
-        primarySwatch: Colors.pink,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.deepPurple,
       ),
       themeMode: ThemeMode.system,
       home: const MenuPrincipal(),
