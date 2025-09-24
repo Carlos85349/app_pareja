@@ -147,6 +147,7 @@ class _DetalleRecuerdoPageState extends State<DetalleRecuerdoPage> {
                                     fontSize: 16,
                                     color: Colors.black87,
                                     height: 1.5,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                   textAlign: TextAlign.justify,
                                 ),

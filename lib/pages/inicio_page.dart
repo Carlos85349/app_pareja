@@ -61,7 +61,11 @@ class _InicioPageState extends State<InicioPage> with AutomaticKeepAliveClientMi
     "Sos mi todo, mi amor 💞",
   ];
 
-  static int _lastPage = 0; // 🔹 recordar última foto vista
+  // Fechas para los contadores
+  final DateTime inicioHablar = DateTime(2024, 8, 29);
+  final DateTime inicioNovios = DateTime(2025, 3, 30);
+
+  static int _lastPage = 0;
   late final PageController _pageController = PageController(initialPage: _lastPage);
 
   int _currentPage = _lastPage;
@@ -70,32 +74,32 @@ class _InicioPageState extends State<InicioPage> with AutomaticKeepAliveClientMi
   late Timer _timerImagenes;
   final Random _random = Random();
 
+  int _diasHablar = 0;
+  int _diasNovios = 0;
+
   @override
   void initState() {
     super.initState();
     _cambiarFrase();
+    _calcularDias();
 
-    // escuchar cambios manuales de página
     _pageController.addListener(() {
       final newPage = _pageController.page?.round() ?? _currentPage;
       if (_currentPage != newPage) {
         _currentPage = newPage;
-        _lastPage = newPage; // actualizar última página vista
+        _lastPage = newPage;
       }
     });
 
-    // cambiar frase cada 5 segundos
     _timerFrases = Timer.periodic(const Duration(seconds: 5), (_) => _cambiarFrase());
 
-    // cambiar imagen cada 3 segundos
     _timerImagenes = Timer.periodic(const Duration(seconds: 3), (_) {
-      // avanzar automáticamente desde la página actual
       if (_currentPage < _imagenes.length - 1) {
         _currentPage++;
       } else {
         _currentPage = 0;
       }
-      _lastPage = _currentPage; // actualizar última página vista
+      _lastPage = _currentPage;
       _pageController.animateToPage(
         _currentPage,
         duration: const Duration(milliseconds: 500),
@@ -110,6 +114,12 @@ class _InicioPageState extends State<InicioPage> with AutomaticKeepAliveClientMi
     });
   }
 
+  void _calcularDias() {
+    final hoy = DateTime.now();
+    _diasHablar = hoy.difference(inicioHablar).inDays;
+    _diasNovios = hoy.difference(inicioNovios).inDays;
+  }
+
   @override
   void dispose() {
     _timerFrases.cancel();
@@ -120,19 +130,21 @@ class _InicioPageState extends State<InicioPage> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // requerido por AutomaticKeepAliveClientMixin
+    super.build(context);
     return FondoDinamico(
       tipo: "inicio",
       child: Stack(
         children: [
+          // Fotos
           PageView.builder(
             key: const PageStorageKey('inicioPageView'),
             controller: _pageController,
             itemCount: _imagenes.length,
+            scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
               return Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
                   child: Card(
                     elevation: 8,
                     shape: RoundedRectangleBorder(
@@ -150,15 +162,64 @@ class _InicioPageState extends State<InicioPage> with AutomaticKeepAliveClientMi
               );
             },
           ),
+
+          // Contadores de días en esquinas superiores
           Positioned(
-            bottom: 50,
+            top: 34,
+            left: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "$_diasHablar días 💬",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: 34,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.redAccent, Colors.redAccent.withOpacity(0.7)],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "$_diasNovios días ❤️",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+
+          // Frases
+          Positioned(
+            bottom: 33,
             left: 20,
             right: 20,
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white70,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 _fraseActual,
